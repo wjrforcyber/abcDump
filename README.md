@@ -7,10 +7,10 @@
 
 This repo has no new features on algorithms themselves but will give tiny examples on how to dump statistics efficiently from ABC.
 <br/>The motivation is that data analysis in python is much more clear and powerful, but it's not easy to give visulization or analysis in C project. Some "stay out of the tool itself" commands can be used to retrieve the data to proper format and help aid the analysis.
-<br/><em>Do notice that the show cases impemented here are quite simple and just helper commands for my own work, you should customize your own interface.</em>
+<br/><em>Do notice that the show cases implemented here are quite simple and just helper commands for my own work, you should customize your own interface.</em>
 
 ## Example
-`write_aig_json`
+- `write_aig_json`
 <br/>Write the aig information into `json` format, here I used an interesting library [json-c](https://github.com/json-c/json-c). There's also quite clear tutorials [here](https://github.com/rbtylee/tutorial-jsonc).
 <br/>There's a tiny example in `src/base/io/ioJsonAig.h` and `src/base/io/ioJsonAig.c`, you could customize the data you would like to collect.
 <br/>For example:
