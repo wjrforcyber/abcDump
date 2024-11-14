@@ -97,6 +97,15 @@ ifndef ABC_USE_NO_PTHREADS
   $(info $(MSG_PREFIX)Using pthreads)
 endif
 
+# whether to compile with the json-c library
+ifndef ABC_USE_NO_JSON
+  CFLAGS += -DABC_USE_JSON
+  CFLAGS += -I/json-c/json-c/
+  CFLAGS += -I/json-c/json-c/json-c-build/
+  LDFLAGS += -L/json-c/json-c/json-c-build -ljson-c
+  $(info $(MSG_PREFIX)Using json-c)
+endif
+
 # whether to compile into position independent code
 ifdef ABC_USE_PIC
   CFLAGS += -fPIC

@@ -88,6 +88,7 @@ static int IoCommandWriteTruths ( Abc_Frame_t * pAbc, int argc, char **argv );
 static int IoCommandWriteStatus ( Abc_Frame_t * pAbc, int argc, char **argv );
 static int IoCommandWriteSmv    ( Abc_Frame_t * pAbc, int argc, char **argv );
 static int IoCommandWriteJson   ( Abc_Frame_t * pAbc, int argc, char **argv );
+static int IoCommandWriteAigJson( Abc_Frame_t * pAbc, int argc, char **argv );
 static int IoCommandWriteResub  ( Abc_Frame_t * pAbc, int argc, char **argv );
 
 extern void Abc_FrameCopyLTLDataBase( Abc_Frame_t *pAbc, Abc_Ntk_t * pNtk );
@@ -164,6 +165,7 @@ void Io_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "I/O", "write_status",  IoCommandWriteStatus,  0 );
     Cmd_CommandAdd( pAbc, "I/O", "write_smv",     IoCommandWriteSmv,     0 );
     Cmd_CommandAdd( pAbc, "I/O", "write_json",    IoCommandWriteJson,    0 );
+    Cmd_CommandAdd( pAbc, "I/O", "write_aig_json",IoCommandWriteAigJson,   0 );
     Cmd_CommandAdd( pAbc, "I/O", "&write_resub",  IoCommandWriteResub,   0 );
 }
 
@@ -4090,6 +4092,52 @@ usage:
     fprintf( pAbc->Err, "\tfile   : the name of the file to write (extension .json)\n" );
     return 1;
 }
+
+/**Function*************************************************************
+
+  Synopsis    []
+
+  Description []
+               
+  SideEffects []
+
+  SeeAlso     []
+
+***********************************************************************/
+int IoCommandWriteAigJson( Abc_Frame_t * pAbc, int argc, char **argv )
+{
+    extern int AigJsonDump(Aig_Man_t *aig, Gia_Man_t *gia, const char * filename);
+    int c;
+    char * pFileName;
+
+    Extra_UtilGetoptReset();
+    while ( ( c = Extra_UtilGetopt( argc, argv, "ch" ) ) != EOF )
+    {
+        switch ( c )
+        {
+            case 'h':
+                goto usage;
+            default:
+                goto usage;
+        }
+    }
+    if ( argc != globalUtilOptind + 1 )
+        goto usage;
+    pFileName = argv[globalUtilOptind];
+    //write out json file
+    extern Aig_Man_t * Abc_NtkToDar( Abc_Ntk_t * pNtk, int fExors, int fRegisters );
+    Aig_Man_t * pAig = Abc_NtkToDar( pAbc->pNtkCur, 0, 1 );
+    AigJsonDump( pAig, NULL, pFileName );
+    return 0;
+
+usage:
+    fprintf( pAbc->Err, "usage: write_aig_json [-h] <file>\n" );
+    fprintf( pAbc->Err, "\t         write the aig network in JSON format\n" );
+    fprintf( pAbc->Err, "\t-h     : print the help message\n" );
+    fprintf( pAbc->Err, "\tfile   : the name of the file to write (extension .json)\n" );
+    return 1;
+}
+
 
 /**Function*************************************************************
 
