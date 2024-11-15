@@ -11,7 +11,7 @@ This repo has no new features on algorithms themselves but will give tiny exampl
 
 ## Example
 - `write_aig_json`
-<br/>Write the aig information into `json` format, here I used an interesting library [json-c](https://github.com/json-c/json-c). There's also quite clear tutorials [here](https://github.com/rbtylee/tutorial-jsonc).
+<br/>Write the aig information into `json` format, here I used an interesting library [json-c](https://github.com/json-c/json-c). There's also a quite clear tutorial [here](https://github.com/rbtylee/tutorial-jsonc).
 <br/>There's a tiny example in `src/base/io/ioJsonAig.h` and `src/base/io/ioJsonAig.c`, you could customize the data you would like to collect.
 <br/>For example:
 ```
@@ -34,7 +34,51 @@ The json representation:
 testonaig.json saved.
 abc 03> quit
 ```
+<br/>Let's say there are tons of submodules in an unflatten design, after concatenate all the `json` data, you could do analysis using any cost function easily in python, here a plot of node number of top 50 cases after sorting submodule set by level is drawn:
+1. Read and concatenate
+```python
+# By the courtesy of https://stackoverflow.com/a/75765186/19954247
+import glob
+import json
+json_objects = []
+target_path = "path/to/json/data/"
+for f in glob.glob(target_path + "*preOpt.aig.json"):
+    try:
+        with open(f, "r", encoding='utf-8') as infile:
+            file_content = json.load(infile)
+            json_objects.append(file_content)
+    except json.JSONDecodeError as e:
+        print(f"Error {f}: {e}")
 
+with open("merged_file.json", "w", encoding='utf-8') as outfile:
+    json.dump(json_objects, outfile, ensure_ascii=False, indent=4)
+
+```
+2. Processing and plot
+```python
+import matplotlib
+import pandas as pd
+import os
+with open("merged_file.json", "r", encoding='utf-8') as infile:
+    file_content = json.load(infile)
+df = pd.DataFrame(file_content)
+
+df = df.sort_values("LevelNum", ascending=False)
+df_new = df.head(50)
+
+def splitDesignName(full_path):
+    return os.path.basename(full_path)
+
+df_design_base = df_new["DesignName"].copy().apply(splitDesignName)
+df_new["DesignName"] = df_design_base
+
+df_plot_NodeNum = pd.DataFrame({'NodeNum': df_new["NodeNum"].tolist()}, index=df_new["DesignName"].tolist())
+ax = df_plot_NodeNum.plot.bar(rot=90)
+```
+<br/>Subdesign names are omitted.
+<p align="center">
+  <img src="showcase/bp.png" width="350"/>
+</p>
 
 # ABC: System for Sequential Logic Synthesis and Formal Verification
 
