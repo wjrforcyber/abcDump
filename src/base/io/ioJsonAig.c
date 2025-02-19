@@ -1,7 +1,7 @@
 #include "aig/gia/gia.h"
 #include "aig/aig/aig.h"
 #include "ioJsonAig.h"
-#include <json.h>
+#include "json.h"
 ABC_NAMESPACE_IMPL_START
 
 void AigDataInit(aigData *data)
