@@ -104,8 +104,12 @@ add_library(libabc EXCLUDE_FROM_ALL ${ABC_SRC})
 abc_properties(libabc PUBLIC)
 set_property(TARGET libabc PROPERTY OUTPUT_NAME abc)
 
+set(BUILD_STATIC_LIBS TRUE CACHE BOOL "enable json-c as static lib" FORCE)
+add_subdirectory(lib/json-c)
 add_executable(abc ${ABC_MAIN_SRC})
-target_link_libraries(abc PRIVATE libabc)
+target_link_libraries(abc PRIVATE libabc json-c)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/build/lib/json-c"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/lib/json-c")
 abc_properties(abc PRIVATE)
 
 add_library(libabc-pic EXCLUDE_FROM_ALL ${ABC_SRC})
@@ -113,7 +117,8 @@ abc_properties(libabc-pic PUBLIC)
 set_property(TARGET libabc-pic PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET libabc-pic PROPERTY OUTPUT_NAME abc-pic)
 
-if(NOT DEFINED ABC_SKIP_TESTS)
+#changed it to by default no tests since download issue occassionally comes up
+if(DEFINED ABC_TESTS)
     enable_testing()
     include(FetchContent)
     FetchContent_Declare(
