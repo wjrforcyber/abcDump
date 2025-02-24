@@ -9,6 +9,17 @@ This repo has no new features on algorithms themselves but will give tiny exampl
 <br/>The motivation is that data analysis in python is much more clear and powerful, but it's not easy to give visulization or analysis in C project. Some "stay out of the tool itself" commands can be used to retrieve the data to proper format and help aid the analysis.
 <br/><em>Do notice that the show cases implemented here are quite simple and just helper commands for my own work, you should customize your own interface.</em>
 
+## Build
+I integrate the static library into the `CMakeList.txt` file, and due to some internet connection error, the GoogleTest package is removed manually since it sometimes failed downloading. So just:
+```
+make clean
+mkdir build
+cd build
+cmake ..
+make
+```
+And `abc` is built and you are good to go.
+
 ## Example
 - `write_aig_json`
 <br/>Write the aig information into `json` format, here I used an interesting library [json-c](https://github.com/json-c/json-c). There's also a quite clear tutorial [here](https://github.com/rbtylee/tutorial-jsonc).
