@@ -249,6 +249,11 @@ struct Gia_Man_t_
     int            iFirstPoId;
     int            iFirstAndObj;
     int            iFirstPoObj;
+    Vec_Str_t *    vTTISOPs;      // truth tables from ISOP computation
+    Vec_Int_t *    vTTLut;      // truth tables from ISOP computation
+    Vec_Int_t *    vMFFCsInfo;    // MFFC information
+    Vec_Int_t *    vMFFCsLuts;        // MFFCs for each lut
+    Vec_Ptr_t *    vLutsRankings;     // LUTs rankings of inputs
 };
 
 
@@ -1431,6 +1436,7 @@ extern void                Gia_ManEquivFixOutputPairs( Gia_Man_t * p );
 extern int                 Gia_ManCheckTopoOrder( Gia_Man_t * p );
 extern int *               Gia_ManDeriveNexts( Gia_Man_t * p );
 extern void                Gia_ManDeriveReprs( Gia_Man_t * p );
+extern void                Gia_ManDeriveReprsFromSibls( Gia_Man_t *p );
 extern int                 Gia_ManEquivCountLits( Gia_Man_t * p );
 extern int                 Gia_ManEquivCountLitsAll( Gia_Man_t * p );
 extern int                 Gia_ManEquivCountClasses( Gia_Man_t * p );
@@ -1801,6 +1807,9 @@ extern Gia_Man_t *         Gia_ManTtoptCare( Gia_Man_t * p, int nIns, int nOuts,
 extern Gia_Man_t *         Gia_ManTransductionBdd( Gia_Man_t * pGia, int nType, int fMspf, int nRandom, int nSortType, int nPiShuffle, int nParameter, int fLevel, Gia_Man_t * pExdc, int fNewLine, int nVerbose );
 extern Gia_Man_t *         Gia_ManTransductionTt( Gia_Man_t * pGia, int nType, int fMspf, int nRandom, int nSortType, int nPiShuffle, int nParameter, int fLevel, Gia_Man_t * pExdc, int fNewLine, int nVerbose );
 
+/*=== giaRrr.cpp ===========================================================*/
+extern Gia_Man_t *         Gia_ManRrr( Gia_Man_t *pGia, int iSeed, int nWords, int nTimeout, int nSchedulerVerbose, int nPartitionerVerbose, int nOptimizerVerbose, int nAnalyzerVerbose, int nSimulatorVerbose, int nSatSolverVerbose, int fUseBddCspf, int fUseBddMspf, int nConflictLimit, int nSortType, int nOptimizerFlow, int nSchedulerFlow, int nDistance, int nRestarts, int nThreads, int nWindowSize, int fDeterministic );
+
 /*=== giaCTas.c ===========================================================*/
 typedef struct Tas_Man_t_  Tas_Man_t;
 extern Tas_Man_t *         Tas_ManAlloc( Gia_Man_t * pAig, int nBTLimit );
@@ -1842,6 +1851,8 @@ extern void                 Bnd_ManPrintStats();
 
 // util
 extern Gia_Man_t*           Bnd_ManCutBoundary( Gia_Man_t *p, Vec_Int_t* vEI, Vec_Int_t* vEO, Vec_Bit_t* vEI_phase, Vec_Bit_t* vEO_phase );
+
+extern int                  Gia_ObjCheckMffc( Gia_Man_t * p, Gia_Obj_t * pRoot, int Limit, Vec_Int_t * vNodes, Vec_Int_t * vLeaves, Vec_Int_t * vInners );
 
 ABC_NAMESPACE_HEADER_END
 
