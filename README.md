@@ -45,6 +45,40 @@ The json representation:
 testonaig.json saved.
 abc 03> quit
 ```
+
+<br/>*Note that the current version shows data like this due to my own need:
+```
+The json representation:
+
+{
+  "CINumber":257,
+  "CONumber":224,
+  "DesignName":"..\/i10",
+  "LevelNum":50,
+  "NodeNum":2675,
+  "EdgesNum":4622,
+  "NodeLevelInfo":[
+    {
+      "MaxLevel":50,
+      "0% - 25%MaxLevel":1707,
+      "25% - 50%MaxLevel":852,
+      "50% - 75%MaxLevel":543,
+      "75% - 100%MaxLevel":53
+    }
+  ],
+  "FanoutInfo":[
+    {
+      "MaxFanout":75,
+      "0% - 25%MaxFanout":2642,
+      "25% - 50%MaxFanout":24,
+      "50% - 75%MaxFanout":8,
+      "0% - 100%MaxFanout":1
+    }
+  ]
+}
+
+testonaig.json saved.
+```
 <br/>Let's say there are tons of submodules in an unflatten design, after concatenate all the `json` data, you could do analysis using any cost function easily in python, here a plot of node number of top 50 cases after sorting submodule set by level is drawn:
 1. Read and concatenate
 ```python

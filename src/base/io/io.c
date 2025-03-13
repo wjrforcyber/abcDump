@@ -4230,15 +4230,18 @@ usage:
 ***********************************************************************/
 int IoCommandWriteAigJson( Abc_Frame_t * pAbc, int argc, char **argv )
 {
-    extern int AigJsonDump(Aig_Man_t *aig, Gia_Man_t *gia, const char * filename);
+    extern int AigJsonDump(Aig_Man_t *aig, Gia_Man_t *gia, const char * filename, int iCollectPi);
     int c;
     char * pFileName;
-
+    int iCollectPi = 0;
     Extra_UtilGetoptReset();
-    while ( ( c = Extra_UtilGetopt( argc, argv, "ch" ) ) != EOF )
+    while ( ( c = Extra_UtilGetopt( argc, argv, "ih" ) ) != EOF )
     {
         switch ( c )
         {
+            case 'i':
+                iCollectPi ^= 1;
+                break;
             case 'h':
                 goto usage;
             default:
@@ -4251,12 +4254,13 @@ int IoCommandWriteAigJson( Abc_Frame_t * pAbc, int argc, char **argv )
     //write out json file
     extern Aig_Man_t * Abc_NtkToDar( Abc_Ntk_t * pNtk, int fExors, int fRegisters );
     Aig_Man_t * pAig = Abc_NtkToDar( pAbc->pNtkCur, 0, 1 );
-    AigJsonDump( pAig, NULL, pFileName );
+    AigJsonDump( pAig, NULL, pFileName , iCollectPi);
     return 0;
 
 usage:
     fprintf( pAbc->Err, "usage: write_aig_json [-h] <file>\n" );
     fprintf( pAbc->Err, "\t         write the aig network in JSON format\n" );
+    fprintf( pAbc->Err, "\t-i       including information of PI\n" );
     fprintf( pAbc->Err, "\t-h     : print the help message\n" );
     fprintf( pAbc->Err, "\tfile   : the name of the file to write (extension .json)\n" );
     return 1;
