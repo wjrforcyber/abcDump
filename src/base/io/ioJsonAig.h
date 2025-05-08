@@ -35,6 +35,8 @@ struct aigData_ {
     char sEdgesName[20];
     char sFanoutDisName[20];
     char sLevelNodeDis[20];
+    char sDagNodeRatioName[20];
+    char sTreeNodeRatioName[20];
 };
 
 /*

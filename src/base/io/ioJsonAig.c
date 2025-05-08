@@ -20,6 +20,8 @@ void AigDataInit(aigData *data)
     strcpy(data->sEdgesName, "EdgesNum");
     strcpy(data->sLevelNodeDis, "NodeDis");
     strcpy(data->sFanoutDisName, "FanoutDis");
+    strcpy(data->sDagNodeRatioName, "DagNodeRatio");
+    strcpy(data->sTreeNodeRatioName, "TreeNodeRatio");
 }
 
 void AigNodeLevelDisInit(aigNodeLevelDis *data)
@@ -241,6 +243,38 @@ int AigFanoutCollect(Aig_Man_t *aig, int iCollectPi)
     return nTotalCount;
 }
 
+int AigDagTreeNodesRatio(Aig_Man_t *aig, double *dagRatio, double *treeRatio)
+{
+    Aig_Obj_t * pObj, * pFanout;
+    int i;
+    int nCurCount = 0;
+    int nDagNode = 0;
+    int nTreeNode = 0;
+    Aig_ManFanoutStart(aig);
+    Aig_ManForEachNode(aig, pObj, i)
+    {
+        int iFan = -1;
+        int j = 0;
+        Aig_ObjForEachFanout( aig, pObj, pFanout, iFan, j )
+        {
+            nCurCount += 1;
+        }
+        if(nCurCount > 1)
+        {
+            nDagNode++;
+        }
+        if(nCurCount == 1)
+        {
+            nTreeNode++;
+        }
+        nCurCount = 0;
+    }
+    *dagRatio = (double)nDagNode / Aig_ManNodeNum(aig);
+    *treeRatio = (double)nTreeNode / Aig_ManNodeNum(aig);
+    Aig_ManFanoutStop(aig);
+    return 0;
+}
+
 int AigJsonDump(Aig_Man_t *aig, Gia_Man_t *gia, const char * filename, int iCollectPi)
 {
     aigData dataLabel;
@@ -292,6 +326,13 @@ int AigJsonDump(Aig_Man_t *aig, Gia_Man_t *gia, const char * filename, int iColl
     }
     AigNodeFanoutDisCollect(aig, &aigFanoutDis, fanoutsDis, iCollectPi);
     json_object_array_add(fanoutInfo, fanoutsDis);
+
+    //add the dag nodes ratio
+    double dagRatio = 0;
+    double treeRatio = 0;
+    AigDagTreeNodesRatio(aig, &dagRatio, &treeRatio);
+    json_object_object_add(root, dataLabel.sDagNodeRatioName, json_object_new_double(dagRatio));
+    json_object_object_add(root, dataLabel.sTreeNodeRatioName, json_object_new_double(treeRatio));
 
     // print json
     printf("The json representation:\n\n%s\n\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
